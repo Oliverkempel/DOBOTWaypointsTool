@@ -1,0 +1,147 @@
+﻿<Window x:Class="Robotarm_Fun.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Robotarm_Fun"
+        mc:Ignorable="d"
+        Title="DOBOT waypoints" Height="800" Width="1200" Closing="Window_Closing">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100px"/>
+            <RowDefinition Height="400px"/>
+            <RowDefinition Height="5px"/>
+            <RowDefinition/>
+            <RowDefinition Height="30px"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Border Background="LightGray" d:Visibility="Collapsed" Grid.RowSpan="100" Grid.ColumnSpan="100" Panel.ZIndex="20" Opacity="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding isConnected}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel Margin="10">
+                <Label Content="Connect to robot via modbus?" FontSize="30"  HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="100"/>
+                <StackPanel>
+                    <Label Content="Ip Address:" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding ipAddress}" Height="40" FontSize="18" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel>
+                    <Label Content="Port:" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding port}" Height="40" FontSize="18" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button x:Name="connectBtn" Content="Connect to modbus" Height="40" Click="Connect_Click" Margin="0,15,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <Label HorizontalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" VerticalAlignment="Center" Grid.Row="0" Content="DOBOT waypoints tool"/>
+
+        <GroupBox Grid.Row="1" Margin="10, 20" Header="Saved Waypoints" Grid.ColumnSpan="2">
+            <DockPanel LastChildFill="True">
+                <Grid DockPanel.Dock="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Margin="0, 5, 0, 0" Content="Go to selected waypoint" Height="40" FontSize="18" HorizontalAlignment="Stretch" FontWeight="SemiBold" Click="GoToSelectedWaypoint_Click"/>
+                    <Button Grid.Column="1" Margin="0, 5, 0, 0" Content="Run waypoints in sequence" Height="40" FontSize="18" Width="Auto" FontWeight="SemiBold" Click="RunInSequence_Click"/>
+                </Grid>
+                <DataGrid x:Name="WaypointsGrid" DockPanel.Dock="Top"  ItemsSource="{Binding robotWaypoints}" SelectionMode="Single">
+                </DataGrid>
+            </DockPanel>
+        </GroupBox>
+
+        <!--<GroupBox Grid.Row="1" Margin="10, 0" Header="Predefined actions" Grid.ColumnSpan="2" Visibility="Collapsed">
+            <ScrollViewer>
+                <StackPanel Margin="5">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Margin" Value="0, 2"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="Hent telefon" Height="40"/>
+                    <Button Content="Action #2" Height="40"/>
+                    <Button Content="Action #3" Height="40"/>
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>-->
+
+        <GridSplitter HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2" ShowsPreview="True" Height="5" Background="Transparent"/>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="1">
+            <!--<GroupBox  Margin="10, 0, 5, 0" Header="Move to point by ID">
+                <DockPanel Margin="5" LastChildFill="True">
+                    <DockPanel.Resources>
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="Margin" Value="0,0,0,0"/>
+                        </Style>
+                    </DockPanel.Resources>
+
+                    <Button Height="40" DockPanel.Dock="Right" Click="MoveToCordID_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Move"/>
+                            <Path Margin="0, 2, 0, 0" Fill="Black" Data="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75 3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75 0 1 1-1.06-1.06l2.47-2.47H3a.75.75 0 0 1 0-1.5h16.19l-2.47-2.47a.75.75 0 0 1 0-1.06Z"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBox Height="40" Text="{Binding pointId}" VerticalContentAlignment="Center" FontSize="18"/>
+                </DockPanel>
+            </GroupBox>-->
+            <Button Content="Reset robot" Height="40" FontSize="18" FontWeight="SemiBold" Margin="10, 0" Click="Button_Click"/>
+        </StackPanel>
+        
+        
+        <StackPanel Grid.Row="3" Grid.Column="1">
+            <GroupBox  Margin="5, 0, 10, 0" Header="Move to coordinates">
+                <DockPanel Margin="5" LastChildFill="False">
+                    <DockPanel.Resources>
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="Margin" Value="0,0,0,0"/>
+                        </Style>
+                    </DockPanel.Resources>
+
+                    <Button Height="40" DockPanel.Dock="Right" Click="MoveToCords_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Move"/>
+                            <Path Margin="0, 2, 0, 0" Fill="Black" Data="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75 3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75 0 1 1-1.06-1.06l2.47-2.47H3a.75.75 0 0 1 0-1.5h16.19l-2.47-2.47a.75.75 0 0 1 0-1.06Z"/>
+                        </StackPanel>
+                    </Button>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="X: " FontSize="18" FontWeight="SemiBold"/>
+                        <!--<Label Content="{Binding xCord}" FontSize="18" FontWeight="SemiBold"/>-->
+                        <TextBox Text="{Binding xCord, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center" FontSize="18" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Y: " FontSize="18" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding yCord, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center" FontSize="18" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Z: " FontSize="18" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding zCord, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center" FontSize="18" Width="100"/>
+                    </StackPanel>
+
+                </DockPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4">
+            <Label Content="Is connected: "/>
+            <Label Content="{Binding isConnected}"/>
+        </StackPanel>
+
+
+    </Grid>
+</Window>
